@@ -7,18 +7,18 @@ DATA_ROOT=${DATA_ROOT:-$PWD}
 dapo_math_17k=/dataset/BytedTsinghua-SIA/DAPO-Math-17k
 aime_2024=/dataset/BytedTsinghua-SIA/AIME_2024
 aime_2025=/dataset/yentinglin/aime_2025
-model_path=$HDFS_ROOT/checkpoint/multiturn-sft-qwen-2.5-32b-instruct/global_step_372
+model_path=/root/verl/recipe/retool/checkpoint/multiturn-sft-qwen-2.5-32b-instruct/global_step_372/huggingface
 
 train_files="['$dapo_math_17k']"
 test_files="['$aime_2025']"
 
 # tool
-tool_config_path=recipe/retool/sandbox_fusion_tool_config.yaml
+tool_config_path=/root/verl/recipe/retool/sandbox_fusion_tool_config.yaml
 
 # wandb
 project_name=boj_retool
 experiment_name=qwen2.5-32b_dapo
-default_local_dir=$DATA_ROOT/checkpoint/$experiment_name
+default_local_dir=/root/verl/recipe/retool/checkpoint/$experiment_name
 
 # ================= algorithm =================
 adv_estimator=grpo

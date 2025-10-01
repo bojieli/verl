@@ -12,8 +12,8 @@ DATA_ROOT=${DATA_ROOT:-$PWD}
 
 TRAIN_DATA=/root/ReTool-SFT/data/train-00000-of-00001.parquet
 EVAL_DATA=/root/ReTool-SFT/data/train-00000-of-00001.parquet
-MODEL_PATH=$HDFS_ROOT/model/Qwen2.5-32B-Instruct
-SAVE_PATH=$DATA_ROOT/checkpoint/$experiment_name
+MODEL_PATH=/root/verl/recipe/retool/model/Qwen2.5-32B-Instruct
+SAVE_PATH=/root/verl/recipe/retool/checkpoint/$experiment_name
 
 torchrun --nnodes=$nnodes \
      --standalone \
