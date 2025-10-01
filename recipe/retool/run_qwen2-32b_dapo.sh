@@ -4,9 +4,9 @@ set -x
 HDFS_ROOT=${HDFS_ROOT:-$PWD}
 DATA_ROOT=${DATA_ROOT:-$PWD}
 
-dapo_math_17k=$DATA_ROOT/dataset/BytedTsinghua-SIA/DAPO-Math-17k
-aime_2024=$DATA_ROOT/dataset/Maxwell-Jia/AIME_2024
-aime_2025=$DATA_ROOT/dataset/yentinglin/aime_2025
+dapo_math_17k=/dataset/BytedTsinghua-SIA/DAPO-Math-17k
+aime_2024=/dataset/BytedTsinghua-SIA/AIME_2024
+aime_2025=/dataset/yentinglin/aime_2025
 model_path=$HDFS_ROOT/checkpoint/multiturn-sft-qwen-2.5-32b-instruct/global_step_372
 
 train_files="['$dapo_math_17k']"
@@ -16,7 +16,7 @@ test_files="['$aime_2025']"
 tool_config_path=recipe/retool/sandbox_fusion_tool_config.yaml
 
 # wandb
-project_name=wuxibin_retool
+project_name=boj_retool
 experiment_name=qwen2.5-32b_dapo
 default_local_dir=$DATA_ROOT/checkpoint/$experiment_name
 
@@ -100,7 +100,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.n_gpus_per_node=8 \
     trainer.val_before_train=True \
     trainer.log_val_generations=100 \
-    trainer.nnodes=2 \
+    trainer.nnodes=1 \
     trainer.save_freq=30 \
     trainer.default_local_dir=$default_local_dir \
     trainer.test_freq=5 \
