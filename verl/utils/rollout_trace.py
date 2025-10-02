@@ -78,7 +78,11 @@ class RolloutTraceConfig:
             MLFLOW_TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", "sqlite:////tmp/mlruns.db")
             mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-            mlflow.set_experiment(project_name)
+            experiment = mlflow.set_experiment(project_name)
+            # Start a run for tracing - each worker needs an active run
+            # Only start a new run if there isn't one already active
+            if not mlflow.active_run():
+                mlflow.start_run(experiment_id=experiment.experiment_id, run_name=experiment_name)
         else:
             config.client = None
 
@@ -98,6 +102,14 @@ class RolloutTraceConfig:
 
     @classmethod
     def reset(cls):
+        # Clean up MLflow run if active
+        if cls._instance and cls._instance.backend == "mlflow" and cls._instance._initialized:
+            try:
+                import mlflow
+                if mlflow.active_run():
+                    mlflow.end_run()
+            except Exception:
+                pass  # Ignore errors during cleanup
         cls._instance = None
 
 
