@@ -26,5 +26,6 @@ math_verify
 tensorboard
 
 # depdendencies for retool RL training
+weave
 vllm
 zmq
