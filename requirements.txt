@@ -27,5 +27,6 @@ tensorboard
 
 # depdendencies for retool RL training
 weave
+mlflow
 vllm
 zmq

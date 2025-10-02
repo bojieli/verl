@@ -94,7 +94,7 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.rollout.val_kwargs.top_p=0.6 \
     actor_rollout_ref.rollout.val_kwargs.temperature=1.0 \
     actor_rollout_ref.rollout.val_kwargs.n=$n_resp_per_prompt_val \
-    actor_rollout_ref.rollout.trace.backend=weave \
+    actor_rollout_ref.rollout.trace.backend=mlflow \
     actor_rollout_ref.rollout.trace.token2text=True \
     trainer.logger=['console','wandb'] \
     trainer.project_name=$project_name \
