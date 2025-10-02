@@ -20,19 +20,27 @@ def load_trace(trace_path: Path) -> Dict[str, Any]:
     return {}
 
 
-def extract_trace_info(trace_data: Dict) -> Dict[str, Any]:
+def extract_trace_info(trace_data: Dict, trace_path: Path = None) -> Dict[str, Any]:
     """Extract key information from trace data."""
     if not trace_data:
         return {}
     
+    # Extract trace_id from spans if not at top level
+    trace_id = trace_data.get("trace_id")
+    spans = trace_data.get("spans", [])
+    if not trace_id and spans:
+        trace_id = spans[0].get("trace_id")
+    # Fallback to folder name
+    if not trace_id and trace_path:
+        trace_id = trace_path.name
+    
     info = {
-        "trace_id": trace_data.get("trace_id"),
-        "status": trace_data.get("status", {}).get("code"),
-        "spans": len(trace_data.get("spans", [])),
+        "trace_id": trace_id,
+        "status": trace_data.get("status", {}).get("code") if trace_data.get("status") else None,
+        "spans": len(spans),
     }
     
     # Extract tags from first span if available
-    spans = trace_data.get("spans", [])
     if spans:
         first_span = spans[0]
         attributes = first_span.get("attributes", {})
@@ -71,7 +79,7 @@ def list_traces(trace_dir: Path, filters: Dict[str, str] = None, limit: int = No
             break
             
         trace_data = load_trace(trace_path)
-        info = extract_trace_info(trace_data)
+        info = extract_trace_info(trace_data, trace_path)
         
         if not info:
             continue
@@ -98,8 +106,19 @@ def view_trace_detail(trace_path: Path):
         print("No trace data found")
         return
     
-    print(f"Trace ID: {trace_data.get('trace_id')}")
-    print(f"Status: {trace_data.get('status', {}).get('code')}")
+    # Extract trace_id from spans if not at top level
+    trace_id = trace_data.get("trace_id")
+    spans = trace_data.get("spans", [])
+    if not trace_id and spans:
+        trace_id = spans[0].get("trace_id")
+    if not trace_id:
+        trace_id = trace_path.name
+    
+    status = trace_data.get("status")
+    status_code = status.get("code") if status else "N/A"
+    
+    print(f"Trace ID: {trace_id}")
+    print(f"Status: {status_code}")
     print(f"\nSpans ({len(trace_data.get('spans', []))}):")
     
     for i, span in enumerate(trace_data.get("spans", []), 1):
@@ -169,12 +188,14 @@ def main():
     print("-" * 100)
     
     for trace in traces:
-        trace_id = trace.get("trace_id", "N/A")[:38]
+        trace_id = trace.get("trace_id") or "N/A"
+        if len(str(trace_id)) > 38:
+            trace_id = str(trace_id)[:38]
         spans = trace.get("spans", "N/A")
         tokens = trace.get("output_tokens") or "N/A"
         source = trace.get("data_source") or "N/A"
         
-        print(f"{trace_id:<40} {spans:<8} {tokens!s:<15} {source:<15}")
+        print(f"{str(trace_id):<40} {str(spans):<8} {str(tokens):<15} {str(source):<15}")
     
     if traces:
         print(f"\nTo view details: python view_traces.py --detail {Path(traces[0]['path']).name}")
