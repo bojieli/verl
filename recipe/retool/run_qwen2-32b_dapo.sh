@@ -17,7 +17,7 @@ tool_config_path=/root/verl/recipe/retool/sandbox_fusion_tool_config.yaml
 
 # wandb
 project_name=boj_retool
-experiment_name=qwen2.5-32b_dapo
+experiment_name=qwen2.5-32b_dapo_with_tool
 default_local_dir=/root/verl/recipe/retool/checkpoint/$experiment_name
 
 # ================= algorithm =================
@@ -33,7 +33,7 @@ clip_ratio_high=0.28
 
 max_turns=8
 max_prompt_length=2048
-max_response_length=16384
+max_response_length=10240
 actor_lr=1e-6
 
 train_batch_size=512
@@ -94,6 +94,8 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.rollout.val_kwargs.top_p=0.6 \
     actor_rollout_ref.rollout.val_kwargs.temperature=1.0 \
     actor_rollout_ref.rollout.val_kwargs.n=$n_resp_per_prompt_val \
+    actor_rollout_ref.rollout.trace.backend=weave \
+    actor_rollout_ref.rollout.trace.token2text=True \
     trainer.logger=['console','wandb'] \
     trainer.project_name=$project_name \
     trainer.experiment_name=$experiment_name \
@@ -101,7 +103,7 @@ python3 -m verl.trainer.main_ppo \
     trainer.val_before_train=True \
     trainer.log_val_generations=100 \
     trainer.nnodes=1 \
-    trainer.save_freq=30 \
+    trainer.save_freq=5 \
     trainer.default_local_dir=$default_local_dir \
     trainer.test_freq=5 \
     trainer.total_epochs=1 $@
